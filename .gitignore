@@ -1,0 +1,8 @@
+node_modules
+dist
+dev-dist
+artifacts
+*.local
+.DS_Store
+npm-debug.log*
+tsconfig.tsbuildinfo

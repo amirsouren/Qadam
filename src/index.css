@@ -1,0 +1,210 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode: we toggle `.dark` on <html> for system/light/dark. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (PRD §4.1)
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-primary: #3b82f6; /* Sky */
+  --color-ink: #1e293b; /* Slate / text */
+  --color-canvas: #f8fafc; /* Background canvas */
+  --color-surface: #ffffff; /* Card surface */
+  --color-accent: #fb923c; /* Reminder coral */
+  --color-accent-soft: #fff7ed; /* Light muted reminder background */
+  --color-idle: #94a3b8; /* Idle / neutral gray */
+  --color-idle-soft: #e2e8f0; /* Soft neutral fill */
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', 'Noto Sans Arabic', 'Vazirmatn', Tahoma, sans-serif;
+}
+
+/* Dark overrides are unlayered so they always win over @theme when present. */
+.dark {
+  --color-primary: #60a5fa;
+  --color-ink: #f1f5f9;
+  --color-canvas: #0b1120;
+  --color-surface: #1e293b;
+  --color-accent-soft: #431a06;
+  --color-idle-soft: #334155;
+  color-scheme: dark;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  /* A calm, always-visible focus ring for keyboard-first use (PRD §4.3). */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion — soft, unhurried, never punitive
+ * ------------------------------------------------------------------ */
+@keyframes qadam-check-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes qadam-soft-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qadam-underline-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes qadam-gentle-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.animate-check-pop {
+  animation: qadam-check-pop 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-soft-in {
+  animation: qadam-soft-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-celebrate {
+  animation: qadam-soft-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-title-sweep::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.35;
+  transform-origin: left center;
+  animation: qadam-underline-sweep 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-idle {
+  animation: qadam-gentle-pulse 3.4s ease-in-out infinite;
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Small shared surfaces
+ * ------------------------------------------------------------------ */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-idle) 22%, transparent);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.04),
+    0 8px 24px -16px rgb(15 23 42 / 0.25);
+}
+
+.dark .card {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 10px 28px -18px rgb(0 0 0 / 0.7);
+}
+
+/* Custom scrollbar tuned to the calm palette. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-idle) 55%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-idle) 45%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
