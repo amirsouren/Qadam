@@ -6,7 +6,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 // Qadam is a local-first PWA: everything is bundled, hashed and precached so the
 // app boots with zero network calls after the very first visit.
 export default defineConfig({
-  plugins: [
+    base: '/Qadam/',  
+    plugins: [
     react(),
     tailwindcss(),
     VitePWA({
